@@ -1,1105 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LactiQ Intelligence | Smart Livestock Monitoring</title>
-  <meta name="description" content="LactiQ builds non-invasive smart patch monitoring and algorithm-driven decision support for calving, repro, and health signals in dairy cattle." />
-  <style>
-    :root {
-      --bg: #03152d;
-      --bg-soft: #0b2344;
-      --panel: #071a33;
-      --panel-2: #0d2443;
-      --text: #f4f4f4;
-      --muted: #c8d0db;
-      --line: rgba(255,255,255,0.1);
-      --red: #e31e2f;
-      --red-dark: #b91422;
-      --white: #ffffff;
-      --shadow: 0 20px 60px rgba(0,0,0,0.25);
-      --radius: 20px;
-      --max: 1220px;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.55;
-    }
-
-    img { max-width: 100%; display: block; }
-    a { color: inherit; text-decoration: none; }
-
-    .container {
-      width: min(calc(100% - 40px), var(--max));
-      margin: 0 auto;
-    }
-
-    .section {
-      padding: 90px 0;
-    }
-
-    .eyebrow {
-      color: var(--red);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    h1, h2, h3, h4, p { margin: 0; }
-
-    h1 {
-      font-size: clamp(44px, 6vw, 74px);
-      line-height: 1.02;
-      max-width: 680px;
-      margin-bottom: 22px;
-    }
-
-    h2 {
-      font-size: clamp(30px, 4vw, 48px);
-      line-height: 1.08;
-      margin-bottom: 16px;
-    }
-
-    .lead {
-      font-size: 19px;
-      color: var(--muted);
-      max-width: 680px;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-top: 32px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 52px;
-      padding: 0 22px;
-      border-radius: 12px;
-      font-weight: 700;
-      transition: 0.2s ease;
-      border: 1px solid transparent;
-    }
-
-    .btn-primary {
-      background: var(--red);
-      color: var(--white);
-    }
-
-    .btn-primary:hover { background: var(--red-dark); }
-
-    .btn-secondary {
-      border-color: rgba(255,255,255,0.28);
-      color: var(--white);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .btn-secondary:hover { background: rgba(255,255,255,0.08); }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(3,21,45,0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .nav {
-      min-height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 170px;
-    }
-
-    .brand img {
-      width: 165px;
-      height: auto;
-      object-fit: contain;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      color: var(--muted);
-      font-size: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-
-    .hero {
-      padding: 70px 0 50px;
-      background:
-        radial-gradient(circle at 84% 18%, rgba(227,30,47,0.18), transparent 24%),
-        linear-gradient(180deg, #03152d 0%, #051a35 100%);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 34px;
-      align-items: center;
-    }
-
-    .hero h1 span {
-      color: var(--red);
-    }
-
-    .hero-points {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 34px;
-    }
-
-    .hero-point {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255,255,255,0.03);
-      color: var(--muted);
-      min-height: 104px;
-    }
-
-    .hero-point strong {
-      display: block;
-      color: var(--white);
-      margin-bottom: 8px;
-      font-size: 15px;
-    }
-
-    .hero-visual {
-      position: relative;
-      min-height: 720px;
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at 50% 20%, rgba(227,30,47,0.08), transparent 25%),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .hero-visual .cow-image {
-      position: absolute;
-      right: -30px;
-      bottom: 0;
-      width: 82%;
-      max-width: 620px;
-      opacity: 0.98;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.28));
-    }
-
-    .marker {
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--red);
-      box-shadow: 0 0 0 10px rgba(227,30,47,0.15), 0 0 0 22px rgba(227,30,47,0.08);
-      z-index: 3;
-    }
-
-    .marker-label {
-      position: absolute;
-      width: 170px;
-      padding: 12px 14px;
-      background: rgba(5,18,37,0.92);
-      border: 1px solid rgba(227,30,47,0.35);
-      border-radius: 14px;
-      font-size: 13px;
-      color: var(--white);
-      z-index: 4;
-      box-shadow: var(--shadow);
-    }
-
-    .marker-label small {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .line {
-      position: absolute;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(227,30,47,0.9), rgba(227,30,47,0));
-      transform-origin: left center;
-      z-index: 2;
-    }
-
-    .impact-bar {
-      background: var(--red);
-      color: var(--white);
-      padding: 28px 0;
-    }
-
-    .impact-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .impact-card {
-      padding: 14px 10px;
-      border-right: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .impact-card:last-child { border-right: none; }
-    .impact-card strong {
-      display: block;
-      font-size: 22px;
-      margin-bottom: 6px;
-    }
-
-    .light {
-      background: #f7f8fb;
-      color: #101827;
-    }
-
-    .light .lead,
-    .light p.muted,
-    .light .stat small,
-    .light .feature p,
-    .light .step p { color: #475467; }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-top: 34px;
-    }
-
-    .step {
-      background: #ffffff;
-      border: 1px solid #e8ebf1;
-      padding: 26px 20px;
-      border-radius: 18px;
-      box-shadow: 0 12px 28px rgba(16,24,40,0.06);
-    }
-
-    .step .number {
-      width: 44px;
-      height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: rgba(227,30,47,0.1);
-      color: var(--red);
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .cards-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-      margin-top: 38px;
-    }
-
-    .card-dark {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-    }
-
-    .card-dark h3 {
-      font-size: 28px;
-      margin-bottom: 12px;
-    }
-
-    .card-dark ul {
-      list-style: none;
-      padding: 0;
-      margin: 18px 0 0;
-      color: var(--muted);
-    }
-
-    .card-dark li {
-      position: relative;
-      padding-left: 18px;
-      margin-bottom: 10px;
-    }
-
-    .card-dark li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 10px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .patch-layout {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .feature-stack {
-      display: grid;
-      gap: 16px;
-      margin-top: 26px;
-    }
-
-    .feature {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      padding: 18px;
-      background: #ffffff;
-      border: 1px solid #e8ebf1;
-      border-radius: 16px;
-      box-shadow: 0 10px 24px rgba(16,24,40,0.05);
-    }
-
-    .feature-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: rgba(227,30,47,0.12);
-      color: var(--red);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      flex: 0 0 auto;
-    }
-
-    .patch-panel {
-      position: relative;
-      min-height: 560px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%);
-      box-shadow: 0 18px 40px rgba(16,24,40,0.1);
-      overflow: hidden;
-    }
-
-    .patch-panel .cow-side {
-      position: absolute;
-      right: 0;
-      bottom: 12px;
-      width: 78%;
-      max-width: 560px;
-    }
-
-    .dash-layout {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 28px;
-      align-items: center;
-    }
-
-    .dashboard {
-      background: linear-gradient(180deg, #071522, #0a1a2b);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .dash-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .dash-top h3 {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    .pill {
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .pill.red {
-      background: rgba(227,30,47,0.14);
-      color: #ffb7be;
-      border: 1px solid rgba(227,30,47,0.28);
-    }
-
-    .pill.green {
-      background: rgba(40,184,115,0.12);
-      color: #8cf0bb;
-      border: 1px solid rgba(40,184,115,0.25);
-    }
-
-    .dash-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      padding: 16px;
-      border-radius: 16px;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 28px;
-      margin-top: 8px;
-    }
-
-    .dash-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 14px;
-    }
-
-    .panel {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      padding: 18px;
-      border-radius: 18px;
-    }
-
-    .panel h4 {
-      font-size: 17px;
-      margin-bottom: 10px;
-    }
-
-    .chart {
-      height: 120px;
-      display: flex;
-      align-items: end;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .bar {
-      flex: 1;
-      background: linear-gradient(180deg, var(--red), #ff5664);
-      border-radius: 10px 10px 4px 4px;
-      opacity: 0.9;
-    }
-
-    .signal-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .signal-row {
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .signal-row strong { font-size: 14px; }
-    .signal-row span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .outcomes {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 18px;
-      margin-top: 36px;
-    }
-
-    .outcome {
-      text-align: center;
-      background: #ffffff;
-      border: 1px solid #e8ebf1;
-      border-radius: 18px;
-      padding: 22px 16px;
-      box-shadow: 0 10px 24px rgba(16,24,40,0.05);
-    }
-
-    .outcome strong {
-      display: block;
-      font-size: 17px;
-      margin-bottom: 8px;
-    }
-
-    .cta {
-      background: linear-gradient(90deg, rgba(227,30,47,0.96), rgba(182,16,31,0.96));
-      color: var(--white);
-      border-radius: 28px;
-      padding: 46px;
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
-      align-items: center;
-    }
-
-    footer {
-      padding: 38px 0 30px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr;
-      gap: 18px;
-    }
-
-    .footer-grid h4 {
-      color: var(--white);
-      margin-bottom: 12px;
-      font-size: 15px;
-    }
-
-    .footer-grid a {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--muted);
-    }
-
-    .footer-grid a:hover { color: var(--white); }
-
-    .copyright {
-      margin-top: 26px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      font-size: 13px;
-    }
-
-    @media (max-width: 1100px) {
-      .hero-grid,
-      .patch-layout,
-      .dash-layout,
-      .footer-grid,
-      .impact-grid,
-      .cards-3,
-      .outcomes,
-      .steps {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .hero-points,
-      .dash-stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .dash-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .nav {
-        flex-direction: column;
-        padding: 14px 0 18px;
-      }
-
-      .nav-links {
-        gap: 14px;
-        font-size: 14px;
-      }
-
-      .hero-grid,
-      .patch-layout,
-      .dash-layout,
-      .footer-grid,
-      .impact-grid,
-      .cards-3,
-      .outcomes,
-      .steps,
-      .hero-points,
-      .dash-stats {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-visual,
-      .patch-panel {
-        min-height: 560px;
-      }
-
-      .hero-visual .cow-image,
-      .patch-panel .cow-side {
-        width: 100%;
-        right: -10px;
-      }
-
-      .cta {
-        padding: 32px 22px;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LactiQ Intelligence — Smarter Livestock Monitoring</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --navy:#0A1628;
+  --navy2:#0D1F38;
+  --red:#C8102E;
+  --redd:#A50D25;
+  --white:#fff;
+  --off:#F7F8FA;
+  --text:#111827;
+  --mid:#374151;
+  --muted:#6B7280;
+  --border:#E5E7EB;
+}
+body{font-family:'Barlow',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden;line-height:1.6;}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:var(--navy);border-bottom:1px solid rgba(255,255,255,.07);transition:box-shadow .3s;}
+.nav-logo{height:38px;width:auto;display:block;}
+.nav-links{display:flex;gap:1.6rem;list-style:none;}
+.nav-links a{text-decoration:none;color:rgba(255,255,255,.6);font-size:.86rem;font-weight:500;transition:color .2s;position:relative;}
+.nav-links a:hover,.nav-links a.on{color:#fff;}
+.nav-links a.on::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--red);}
+.nav-cta{background:var(--red);color:#fff;padding:9px 22px;border-radius:4px;font-size:.85rem;font-weight:700;text-decoration:none;white-space:nowrap;transition:background .2s;}
+.nav-cta:hover{background:var(--redd);}
+
+/* ─── HERO ─── */
+.hero{background:var(--navy);padding-top:62px;min-height:92vh;position:relative;overflow:hidden;display:flex;align-items:center;}
+.hero-inner{display:grid;grid-template-columns:1fr 1.05fr;align-items:center;width:100%;max-width:1300px;margin:0 auto;padding:3rem 5% 0;}
+@media(max-width:860px){.hero-inner{grid-template-columns:1fr;}.hero-photo{display:none;}}
+
+/* left copy */
+.hero-copy{position:relative;z-index:2;padding-bottom:3rem;}
+.hero h1{font-size:clamp(2.2rem,4.2vw,3.3rem);font-weight:800;line-height:1.1;color:#fff;margin-bottom:1.1rem;}
+.hero h1 span{color:var(--red);}
+.hero-sub{font-size:.97rem;color:rgba(255,255,255,.55);max-width:420px;margin-bottom:2rem;font-weight:300;line-height:1.75;}
+.hero-btns{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:2.2rem;}
+.btn-red{background:var(--red);color:#fff;padding:12px 26px;border-radius:4px;font-size:.9rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Barlow',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .2s;}
+.btn-red:hover{background:var(--redd);}
+.btn-ghost-w{background:transparent;color:#fff;padding:11px 22px;border-radius:4px;font-size:.88rem;font-weight:500;text-decoration:none;border:1.5px solid rgba(255,255,255,.25);display:inline-flex;align-items:center;gap:7px;transition:border-color .2s;font-family:'Barlow',sans-serif;}
+.btn-ghost-w:hover{border-color:rgba(255,255,255,.55);}
+.hero-pills{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.pill{display:flex;align-items:center;gap:6px;font-size:.78rem;color:rgba(255,255,255,.45);font-weight:500;}
+.pill svg{opacity:.65;}
+
+/* hero photo + callout dots */
+.hero-photo{position:relative;align-self:flex-end;}
+.hero-photo img{width:100%;max-width:580px;height:auto;display:block;object-fit:cover;object-position:center top;}
+.dot-group{position:absolute;pointer-events:none;}
+.dot-ring{position:absolute;transform:translate(-50%,-50%);}
+.dot-ring .ring{width:22px;height:22px;border-radius:50%;background:var(--red);border:2.5px solid #fff;box-shadow:0 0 0 5px rgba(200,16,46,.25);}
+.callout-box{position:absolute;background:rgba(10,22,40,.82);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:7px 11px;backdrop-filter:blur(8px);white-space:nowrap;}
+.callout-box strong{display:block;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.3px;}
+.callout-box span{font-size:.67rem;color:rgba(255,255,255,.5);}
+.callout-line{position:absolute;background:rgba(255,255,255,.25);height:1px;transform-origin:left center;}
+
+/* ─── RED BAND ─── */
+.red-band{background:var(--red);}
+.rb-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.18);}
+.rb-cell{background:var(--red);padding:1.35rem 2.2rem;display:flex;align-items:flex-start;gap:.95rem;}
+.rb-cell svg{flex-shrink:0;margin-top:2px;opacity:.92;}
+.rb-cell h4{font-size:.96rem;font-weight:700;color:#fff;margin-bottom:.18rem;}
+.rb-cell p{font-size:.78rem;color:rgba(255,255,255,.72);line-height:1.45;}
+
+/* ─── SECTION BASE ─── */
+.sec{padding:5rem 5%;}
+.sec-inner{max-width:1200px;margin:0 auto;}
+.ey{font-size:.68rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);margin-bottom:.55rem;}
+.h2{font-family:'Barlow',sans-serif;font-size:clamp(1.75rem,2.8vw,2.5rem);font-weight:800;line-height:1.1;margin-bottom:.85rem;}
+.lead{font-size:.96rem;color:var(--muted);line-height:1.75;margin-bottom:2.5rem;max-width:480px;}
+.sec-dark{background:var(--navy);}
+.sec-dark .h2{color:#fff;}
+.sec-dark .ey{color:var(--red);}
+.sec-dark .lead{color:rgba(255,255,255,.5);}
+.sec-off{background:var(--off);}
+
+/* ─── HOW IT WORKS ─── */
+.hiw-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:4rem;align-items:center;}
+@media(max-width:800px){.hiw-grid{grid-template-columns:1fr;}}
+.steps-row{display:flex;gap:0;position:relative;}
+.steps-row::before{content:'';position:absolute;top:25px;left:25px;right:25px;height:1.5px;background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 7px,transparent 7px,transparent 13px);}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;z-index:1;padding:0 .4rem;}
+.step-circ{width:50px;height:50px;border-radius:50%;background:#fff;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:.85rem;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.step-lbl{font-size:.7rem;font-weight:700;color:var(--red);margin-bottom:.3rem;letter-spacing:.3px;}
+.step h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem;color:var(--text);}
+.step p{font-size:.78rem;color:var(--muted);line-height:1.5;}
+
+/* ─── SIGNALS ─── */
+.sig-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:3.5rem;align-items:start;}
+@media(max-width:800px){.sig-layout{grid-template-columns:1fr;}}
+.checks{display:flex;flex-direction:column;gap:1rem;margin-top:1.2rem;}
+.chk{display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;color:rgba(255,255,255,.62);line-height:1.5;}
+.chk-dot{width:18px;height:18px;min-width:18px;border-radius:50%;border:1px solid rgba(200,16,46,.45);display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0;}
+.chk strong{color:#fff;}
+.sig-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+@media(max-width:700px){.sig-cards{grid-template-columns:1fr;}}
+.sig-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:8px;padding:1.4rem;}
+.sig-card h4{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:.7rem;}
+.sig-ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.sig-ul li{font-size:.78rem;color:rgba(255,255,255,.48);padding-left:.9rem;position:relative;}
+.sig-ul li::before{content:'–';position:absolute;left:0;color:var(--red);}
+.wave-line{margin-top:1rem;opacity:.45;}
+
+/* ─── SMART PATCH ─── */
+.patch-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+@media(max-width:800px){.patch-layout{grid-template-columns:1fr;}}
+.place-list{display:flex;flex-direction:column;gap:1.4rem;}
+.pl-item{display:flex;gap:1rem;align-items:flex-start;}
+.pl-thumb{width:72px;height:72px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--border);background:var(--off);}
+.pl-thumb img{width:100%;height:100%;object-fit:cover;}
+.pl-item h4{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:.25rem;}
+.pl-item p{font-size:.8rem;color:var(--muted);line-height:1.55;}
+.cow-photo-wrap{position:relative;border-radius:12px;overflow:hidden;}
+.cow-photo-wrap img{width:100%;height:auto;display:block;}
+.photo-dot{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--red);border:2.5px solid #fff;box-shadow:0 0 0 5px rgba(200,16,46,.22);transform:translate(-50%,-50%);}
+
+/* ─── DASHBOARD ─── */
+.dash-layout{display:grid;grid-template-columns:1.15fr 1fr;gap:4rem;align-items:center;}
+@media(max-width:800px){.dash-layout{grid-template-columns:1fr;}}
+.dash-img{border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+.dash-img img{width:100%;height:auto;display:block;}
+.dash-bullets{display:flex;flex-direction:column;gap:.95rem;margin-bottom:2rem;}
+.db{display:flex;align-items:center;gap:.75rem;font-size:.88rem;color:rgba(255,255,255,.62);line-height:1.5;}
+.db svg{flex-shrink:0;}
+
+/* ─── OUTCOMES ─── */
+.oc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.5rem;margin-top:2rem;}
+@media(max-width:900px){.oc-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:560px){.oc-grid{grid-template-columns:repeat(2,1fr);}}
+.oc-card{text-align:center;padding:1.5rem 1rem;}
+.oc-icon{width:52px;height:52px;border-radius:50%;background:rgba(200,16,46,.08);border:1.5px solid rgba(200,16,46,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.oc-card h4{font-size:.88rem;font-weight:700;margin-bottom:.3rem;color:var(--text);}
+.oc-card p{font-size:.76rem;color:var(--muted);line-height:1.5;}
+
+/* ─── CTA BOTTOM ─── */
+.cta-sec{background:var(--navy);}
+.cta-inner{max-width:1200px;margin:0 auto;padding:5rem 5%;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:3rem;align-items:start;}
+@media(max-width:800px){.cta-inner{grid-template-columns:1fr;}}
+.cta-h2{font-size:clamp(1.7rem,2.8vw,2.2rem);font-weight:800;color:#fff;line-height:1.2;margin-bottom:.75rem;}
+.cta-h2 span{color:var(--red);}
+.cta-sub{font-size:.88rem;color:rgba(255,255,255,.45);line-height:1.7;font-weight:300;}
+.cta-act-list{display:flex;flex-direction:column;gap:1.6rem;}
+.cta-act{display:flex;align-items:flex-start;gap:.9rem;}
+.cta-act-ic{width:40px;height:40px;min-width:40px;border-radius:50%;border:1.5px solid rgba(200,16,46,.32);display:flex;align-items:center;justify-content:center;}
+.cta-act h5{font-size:.88rem;font-weight:700;color:#fff;margin-bottom:.18rem;}
+.cta-act p{font-size:.78rem;color:rgba(255,255,255,.4);line-height:1.5;}
+.form-col{display:flex;flex-direction:column;gap:.6rem;}
+.form-col label{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.form-input{padding:11px 14px;border-radius:4px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:#fff;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(200,16,46,.5);}
+.form-input::placeholder{color:rgba(255,255,255,.3);}
+.form-btn{background:var(--red);color:#fff;border:none;padding:12px;border-radius:4px;font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;width:100%;transition:background .2s;}
+.form-btn:hover{background:var(--redd);}
+#form-ok{display:none;text-align:center;font-size:.85rem;color:rgba(255,255,255,.7);padding:.5rem 0;}
+
+/* ─── FOOTER ─── */
+footer{background:#060E1C;padding:3rem 5% 1.5rem;border-top:1px solid rgba(255,255,255,.04);}
+.foot-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.5fr;gap:2.5rem;padding-bottom:2.2rem;border-bottom:1px solid rgba(255,255,255,.05);}
+@media(max-width:880px){.foot-inner{grid-template-columns:1fr 1fr;}}
+.foot-logo{height:32px;opacity:.8;display:block;margin-bottom:.65rem;}
+.foot-tagline{font-size:.76rem;color:rgba(255,255,255,.3);line-height:1.6;max-width:220px;}
+.foot-socials{display:flex;gap:.7rem;margin-top:.85rem;}
+.foot-socials a{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;font-size:.72rem;transition:border-color .2s,color .2s;}
+.foot-socials a:hover{border-color:rgba(255,255,255,.35);color:#fff;}
+.foot-h{font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.7rem;}
+.foot-links{display:flex;flex-direction:column;gap:.38rem;}
+.foot-links a{font-size:.8rem;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s;}
+.foot-links a:hover{color:#fff;}
+.nl-row{display:flex;gap:.5rem;margin-top:.7rem;}
+.nl-row input{flex:1;padding:8px 11px;border-radius:4px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-family:'Barlow',sans-serif;font-size:.8rem;outline:none;}
+.nl-row input::placeholder{color:rgba(255,255,255,.28);}
+.nl-row button{background:var(--red);color:#fff;border:none;padding:8px 14px;border-radius:4px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;white-space:nowrap;}
+.foot-bottom{max-width:1200px;margin:1.2rem auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.72rem;color:rgba(255,255,255,.2);}
+</style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <a class="brand" href="#home" aria-label="LactiQ Intelligence home">
-        <img src="assets/lactiq-logo.png" alt="LactiQ Intelligence logo" />
-      </a>
-      <nav class="nav-links">
-        <a href="#home">Home</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#signals">Calving, Repro & Health</a>
-        <a href="#patch">Smart Patch</a>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <a class="btn btn-primary" href="#contact">Request a Demo</a>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#"><img src="LactiQ_Intel_logo.png" alt="LactiQ Intelligence" class="nav-logo"></a>
+  <ul class="nav-links">
+    <li><a href="#" class="on">Home</a></li>
+    <li><a href="#hiw">How It Works</a></li>
+    <li><a href="#health">Health</a></li>
+    <li><a href="#repro">Calving &amp; Repro</a></li>
+    <li><a href="#technology">Technology</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Request a Demo</a>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <!-- LEFT -->
+    <div class="hero-copy">
+      <h1>Smarter livestock<br>monitoring starts<br><span>before symptoms show.</span></h1>
+      <p class="hero-sub">LactiQ helps dairy producers track early temperature and movement signals through a non-invasive smart patch and AI-powered analytics platform.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-red">Request a Demo</a>
+        <a href="#hiw" class="btn-ghost-w">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          See How It Works
+        </a>
+      </div>
+      <div class="hero-pills">
+        <div class="pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="2" stroke="white" stroke-width="1.6"/><rect x="13" y="3" width="8" height="8" rx="2" stroke="white" stroke-width="1.6"/><rect x="3" y="13" width="8" height="8" rx="2" stroke="white" stroke-width="1.6"/><rect x="13" y="13" width="8" height="8" rx="2" stroke="white" stroke-width="1.6"/></svg>
+          Non-Invasive Smart Patch
+        </div>
+        <div class="pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.6"/><polyline points="12 7 12 12 15 15" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Continuous Monitoring
+        </div>
+        <div class="pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.9 6.3 6.8.6-5 4.6 1.5 6.7L12 17l-6.2 3.2 1.5-6.7-5-4.6 6.8-.6L12 2z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          AI-Powered Insights
+        </div>
+        <div class="pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="white" stroke-width="1.6"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke="white" stroke-width="1.6"/></svg>
+          Actionable Alerts
+        </div>
+      </div>
     </div>
-  </header>
 
-  <main>
-    <section class="hero" id="home">
-      <div class="container hero-grid">
-        <div>
-          <div class="eyebrow">Non-invasive smart monitoring</div>
-          <h1>Smarter livestock monitoring starts <span>before symptoms show.</span></h1>
-          <p class="lead">
-            LactiQ combines a non-invasive smart patch, algorithm-driven analytics, and a simple dashboard to detect calving, repro, and health signals earlier so farms can improve milk yield, reduce culling, and make faster herd decisions.
-          </p>
-          <div class="btn-row">
-            <a class="btn btn-primary" href="#contact">Request a Demo</a>
-            <a class="btn btn-secondary" href="#how-it-works">See How It Works</a>
-          </div>
+    <!-- RIGHT — real cow photo from ChatGPT reference image -->
+    <div class="hero-photo" style="position:relative;">
+      <!-- Use the ChatGPT reference image which has the cow with sensor dots already -->
+      <img src="product_hero.png" alt="LactiQ smart patch on dairy cow" style="width:100%;max-width:600px;height:auto;display:block;border-radius:0 0 8px 8px;">
 
-          <div class="hero-points">
-            <div class="hero-point">
-              <strong>Calving Signals</strong>
-              Monitors late gestation changes and transition behavior close to calving.
-            </div>
-            <div class="hero-point">
-              <strong>Repro Signals</strong>
-              Tracks movement and physiological patterns linked to heat and reproductive timing.
-            </div>
-            <div class="hero-point">
-              <strong>Health Signals</strong>
-              Flags risk patterns such as elevated temperature plus low movement and low rumination.
-            </div>
-            <div class="hero-point">
-              <strong>Decision Support</strong>
-              Turns raw vibration, blood flow, motion, and temperature signals into farm action.
-            </div>
-          </div>
+      <!-- Callout: Behind Ear -->
+      <div style="position:absolute;top:12%;right:5%;background:rgba(10,22,40,.85);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:7px 11px;backdrop-filter:blur(8px);">
+        <strong style="display:block;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.3px;">Smart Patch</strong>
+        <span style="font-size:.67rem;color:rgba(255,255,255,.5);">Non-Invasive · Continuous</span>
+      </div>
+
+      <!-- Callout: Algorithm -->
+      <div style="position:absolute;top:14%;right:5%;margin-top:52px;background:rgba(10,22,40,.85);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:7px 11px;backdrop-filter:blur(8px);">
+        <strong style="display:block;font-size:.72rem;font-weight:700;color:var(--red);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;">Algorithm &amp; Analytics</strong>
+        <div style="display:flex;align-items:center;gap:5px;font-size:.67rem;color:rgba(255,255,255,.5);margin-bottom:2px;">
+          <span style="color:var(--red);">◆</span> Pattern Recognition
         </div>
-
-        <div class="hero-visual" aria-label="Cow with smart patch sensing points">
-          <img class="cow-image" src="assets/cow-hero.png" alt="Dairy cow with sensing locations" />
-
-          <div class="marker" style="top: 118px; right: 198px;"></div>
-          <div class="line" style="top: 129px; right: 214px; width: 138px; transform: rotate(-8deg);"></div>
-          <div class="marker-label" style="top: 80px; left: 34px;">
-            Behind Ear
-            <small>Temperature, activity, and physiological change monitoring</small>
-          </div>
-
-          <div class="marker" style="top: 298px; right: 272px;"></div>
-          <div class="line" style="top: 309px; right: 288px; width: 166px; transform: rotate(-176deg);"></div>
-          <div class="marker-label" style="top: 258px; left: 82px;">
-            Heart Area
-            <small>Vibration and blood flow related signals for physiological monitoring</small>
-          </div>
-
-          <div class="marker" style="top: 468px; right: 116px;"></div>
-          <div class="line" style="top: 479px; right: 132px; width: 204px; transform: rotate(-177deg);"></div>
-          <div class="marker-label" style="top: 438px; left: 112px;">
-            Rear Tail Area
-            <small>Calving and repro related changes near the tail head and above the rear side of the udder</small>
-          </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:.67rem;color:rgba(255,255,255,.5);margin-bottom:2px;">
+          <span style="color:var(--red);">◆</span> Early Anomaly Detection
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:.67rem;color:rgba(255,255,255,.5);">
+          <span style="color:var(--red);">◆</span> Predictive Modeling
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="impact-bar">
-      <div class="container impact-grid">
-        <div class="impact-card">
-          <strong>Calving</strong>
-          Earlier visibility around late gestation and transition periods when timing matters most.
-        </div>
-        <div class="impact-card">
-          <strong>Repro</strong>
-          Better detection of heat linked behavior and decision support around reproductive timing.
-        </div>
-        <div class="impact-card">
-          <strong>Health</strong>
-          Earlier detection of fever, low activity, and abnormal behavior patterns linked to disease risk.
-        </div>
+<!-- ─── RED BAND ─── -->
+<div class="red-band">
+  <div class="rb-inner">
+    <div class="rb-cell">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="10" rx="5" ry="7" stroke="white" stroke-width="1.8"/><path d="M7 17c0 1.7 2.7 3 5 3s5-1.3 5-3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div><h4>Calving</h4><p>Early detection around critical transition periods</p></div>
+    </div>
+    <div class="rb-cell">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="white" stroke-width="1.8"/></svg>
+      <div><h4>Repro</h4><p>Better heat detection &amp; reproductive performance</p></div>
+    </div>
+    <div class="rb-cell">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h4>Health</h4><p>Identify issues earlier &amp; improve animal welfare</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="sec" id="hiw">
+  <div class="sec-inner">
+    <div class="hiw-grid">
+      <div>
+        <p class="ey">How It Works</p>
+        <h2 class="h2">Simple. Smart.<br>Actionable.</h2>
+        <p class="lead">LactiQ combines a non-invasive smart patch with advanced AI algorithms to turn raw animal data into clear, actionable insights for better herd management.</p>
+        <a href="#technology" class="btn-red" style="display:inline-flex;">See How It Works</a>
       </div>
-    </section>
-
-    <section class="section light" id="how-it-works">
-      <div class="container">
-        <div class="eyebrow">How it works</div>
-        <h2>Simple. Smart. Actionable.</h2>
-        <p class="lead">
-          LactiQ is designed to collect meaningful physiological and behavioral signals, interpret them through farm-ready algorithms, and present clear next-step decisions in a practical dashboard.
-        </p>
-
-        <div class="steps">
+      <div>
+        <div class="steps-row">
           <div class="step">
-            <div class="number">1</div>
-            <h3>Attach</h3>
-            <p>Apply the smart patch at key monitoring areas such as behind the ear, near the heart area, or near the tail head and rear udder region.</p>
+            <div class="step-circ">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="#C8102E" stroke-width="1.8"/><line x1="9" y1="7" x2="15" y2="7" stroke="#C8102E" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="11" x2="13" y2="11" stroke="#C8102E" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="step-lbl">1. Attach</div>
+            <h4>Attach</h4>
+            <p>Apply the smart patch to key areas — behind ear, upper udder, heart area.</p>
           </div>
           <div class="step">
-            <div class="number">2</div>
-            <h3>Collect</h3>
-            <p>Continuously capture temperature, motion, vibration, and blood flow related physiological signals.</p>
+            <div class="step-circ">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#C8102E" stroke-width="1.8"/><path d="M6.3 17.7a8 8 0 010-11.4M17.7 6.3a8 8 0 010 11.4" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="step-lbl">2. Collect</div>
+            <h4>Collect</h4>
+            <p>Continuously collects temperature, activity, and physiological signals.</p>
           </div>
           <div class="step">
-            <div class="number">3</div>
-            <h3>Analyze</h3>
-            <p>Use algorithms to identify signal combinations associated with calving, repro events, fever risk, and abnormal recovery patterns.</p>
+            <div class="step-circ">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2a7 7 0 100 14A7 7 0 0012 2z" stroke="#C8102E" stroke-width="1.8"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5" stroke="#C8102E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="step-lbl">3. Analyze</div>
+            <h4>Analyze</h4>
+            <p>AI algorithms analyze patterns and detect anomalies early.</p>
           </div>
           <div class="step">
-            <div class="number">4</div>
-            <h3>Act</h3>
-            <p>Give herd teams alerts and cow-level priorities that support earlier checks, better timing, and stronger milk and health outcomes.</p>
+            <div class="step-circ">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="step-lbl">4. Act</div>
+            <h4>Act</h4>
+            <p>Get actionable alerts and recommendations for informed decisions.</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="section" id="signals">
-      <div class="container">
-        <div class="eyebrow">Smarter insights</div>
-        <h2>Calving. Repro. Health. All connected.</h2>
-        <p class="lead">
-          The value is not just the sensor. It is the algorithm layer that converts multiple signals into meaningful patterns farms can use.
-        </p>
-
-        <div class="cards-3">
-          <article class="card-dark">
-            <h3>Calving Signals</h3>
-            <p>Track transition cows more closely during the highest-risk period before and after calving.</p>
-            <ul>
-              <li>Late gestation monitoring</li>
-              <li>Tail head and rear-side behavior change detection</li>
-              <li>Transition and post-calving follow up</li>
-            </ul>
-          </article>
-
-          <article class="card-dark">
-            <h3>Repro Signals</h3>
-            <p>Capture activity and physiological changes that may support better heat and reproductive timing decisions.</p>
-            <ul>
-              <li>Cycle-linked movement patterns</li>
-              <li>Heat detection support</li>
-              <li>Reproductive decision support</li>
-            </ul>
-          </article>
-
-          <article class="card-dark">
-            <h3>Health Signals</h3>
-            <p>Identify cows that need attention earlier, especially when fever, low movement, and low rumination appear together.</p>
-            <ul>
-              <li>Acute mastitis risk screening logic</li>
-              <li>Early abnormal behavior alerts</li>
-              <li>Prioritized daily herd checks</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section light" id="patch">
-      <div class="container patch-layout">
-        <div>
-          <div class="eyebrow">Smart patch</div>
-          <h2>Non-invasive. Accurate. Farm-ready.</h2>
-          <p class="lead">
-            LactiQ is being designed as a practical wearable monitoring system that fits real farm workflows while collecting signals that matter for early decision making.
-          </p>
-
-          <div class="feature-stack">
-            <div class="feature">
-              <div class="feature-badge">1</div>
-              <div>
-                <strong>Behind Ear</strong>
-                <p>Supports temperature and activity linked signal collection in an accessible placement area.</p>
-              </div>
-            </div>
-            <div class="feature">
-              <div class="feature-badge">2</div>
-              <div>
-                <strong>Heart Area</strong>
-                <p>Supports physiological monitoring using vibration and blood flow related signals.</p>
-              </div>
-            </div>
-            <div class="feature">
-              <div class="feature-badge">3</div>
-              <div>
-                <strong>Rear Tail Area</strong>
-                <p>Supports calving and repro related monitoring near the tail head and above the rear side of the udder.</p>
-              </div>
-            </div>
+<!-- ─── SIGNALS ─── -->
+<section class="sec sec-dark" id="health">
+  <div class="sec-inner">
+    <div class="sig-layout">
+      <div>
+        <p class="ey">Smarter Insights</p>
+        <h2 class="h2">Calving. Repro. Health.<br>All Connected.</h2>
+        <p class="lead">Our AI algorithms analyze multiple physiological and behavioral signals to give you early visibility into what matters most.</p>
+        <div class="checks">
+          <div class="chk">
+            <div class="chk-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span><strong>Calving Signals</strong> – Monitor transition &amp; calving events with early warnings.</span>
           </div>
-        </div>
-
-        <div class="patch-panel">
-          <img class="cow-side" src="assets/cow-side.png" alt="Cow side view with smart patch placement zones" />
-
-          <div class="marker" style="top: 92px; right: 86px;"></div>
-          <div class="marker" style="top: 254px; right: 220px;"></div>
-          <div class="marker" style="top: 392px; right: 28px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="dashboard">
-      <div class="container dash-layout">
-        <div class="dashboard">
-          <div class="dash-top">
-            <div>
-              <div class="eyebrow" style="margin-bottom:6px;">Algorithm dashboard</div>
-              <h3>Farm-ready decisions, not random data.</h3>
-              <p style="color: var(--muted); max-width: 560px;">
-                Example logic below shows how the system can connect stage of pregnancy, temperature, movement, rumination, and behavior change into practical alerts.
-              </p>
-            </div>
-            <div class="pill red">3 cows need review</div>
+          <div class="chk">
+            <div class="chk-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span><strong>Repro Signals</strong> – Heat detection, cycle tracking &amp; reproductive health.</span>
           </div>
-
-          <div class="dash-stats">
-            <div class="stat">
-              <small style="color: var(--muted);">Monitored Cows</small>
-              <strong>48</strong>
-            </div>
-            <div class="stat">
-              <small style="color: var(--muted);">Late Gestation</small>
-              <strong>11</strong>
-            </div>
-            <div class="stat">
-              <small style="color: var(--muted);">High Priority</small>
-              <strong>3</strong>
-            </div>
-            <div class="stat">
-              <small style="color: var(--muted);">Stable Today</small>
-              <strong>45</strong>
-            </div>
-          </div>
-
-          <div class="dash-grid">
-            <div class="panel">
-              <h4>Milk Yield Protection Priorities</h4>
-              <div class="chart" aria-hidden="true">
-                <div class="bar" style="height:44%"></div>
-                <div class="bar" style="height:58%"></div>
-                <div class="bar" style="height:61%"></div>
-                <div class="bar" style="height:72%"></div>
-                <div class="bar" style="height:68%"></div>
-                <div class="bar" style="height:79%"></div>
-                <div class="bar" style="height:86%"></div>
-              </div>
-              <p style="color: var(--muted); margin-top: 12px; font-size: 14px;">
-                Priority score reflects cows with signal patterns that may affect health, transition recovery, and downstream milk yield.
-              </p>
-            </div>
-
-            <div class="panel">
-              <h4>Signal Rules in Action</h4>
-              <div class="signal-list">
-                <div class="signal-row">
-                  <div>
-                    <strong>Cow 1784</strong>
-                    <span>282 days pregnant + rising rear-tail activity + posture change</span>
-                  </div>
-                  <div class="pill red">Possible calving</div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Cow 0931</strong>
-                    <span>39.1°C + low movement + low rumination</span>
-                  </div>
-                  <div class="pill red">Mastitis risk</div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Cow 2210</strong>
-                    <span>High activity spike + heat pattern + normal temperature</span>
-                  </div>
-                  <div class="pill green">Repro watch</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel">
-              <h4>Today’s Decision Queue</h4>
-              <div class="signal-list">
-                <div class="signal-row">
-                  <div>
-                    <strong>Check Cow 1784 now</strong>
-                    <span>Late gestation cow showing calving-linked movement changes</span>
-                  </div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Examine udder on Cow 0931</strong>
-                    <span>Fever + low rumination + low motion may warrant mastitis screening</span>
-                  </div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Flag Cow 2210 for repro follow-up</strong>
-                    <span>Heat-like activity pattern without fever signal</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel">
-              <h4>Herd Optimization Goals</h4>
-              <div class="signal-list">
-                <div class="signal-row">
-                  <div>
-                    <strong>Protect milk yield</strong>
-                    <span>Catch transition and health issues earlier</span>
-                  </div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Reduce culling pressure</strong>
-                    <span>Improve timing of checks and interventions</span>
-                  </div>
-                </div>
-                <div class="signal-row">
-                  <div>
-                    <strong>Improve labor efficiency</strong>
-                    <span>Direct staff to the cows most likely to need attention</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="eyebrow">AI-powered dashboard</div>
-          <h2>Algorithm-based decisions for better herd outcomes.</h2>
-          <p class="lead">
-            LactiQ is being built to connect raw sensor signals with farm logic that actually makes sense. Instead of showing noise, the dashboard highlights cows that are close to calving, may be entering heat, or may be showing early signs of health risk.
-          </p>
-          <div class="btn-row">
-            <a class="btn btn-primary" href="#contact">Request a Demo</a>
+          <div class="chk">
+            <div class="chk-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span><strong>Health Signals</strong> – Detect illness, stress, and abnormal behavior early.</span>
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="section light">
-      <div class="container">
-        <div class="eyebrow">Better outcomes</div>
-        <h2>Optimize performance. Improve profits.</h2>
-        <div class="outcomes">
-          <div class="outcome">
-            <strong>Optimize Milk Yield</strong>
-            Focus earlier on cows with patterns linked to lost production risk.
-          </div>
-          <div class="outcome">
-            <strong>Reduce Costs</strong>
-            Support earlier checks and treatment timing where needed.
-          </div>
-          <div class="outcome">
-            <strong>Less Culling</strong>
-            Keep more cows productive by identifying risk patterns sooner.
-          </div>
-          <div class="outcome">
-            <strong>Better Animal Care</strong>
-            Improve visibility into cows that need attention first.
-          </div>
-          <div class="outcome">
-            <strong>Stronger Decisions</strong>
-            Give managers a simple dashboard for daily action and herd prioritization.
-          </div>
+      <div class="sig-cards">
+        <div class="sig-card">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="margin-bottom:.9rem;"><ellipse cx="12" cy="10" rx="5" ry="7" stroke="#C8102E" stroke-width="1.7"/><path d="M7 17c0 1.7 2.2 3 5 3s5-1.3 5-3" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <h4>Calving Signals</h4>
+          <ul class="sig-ul"><li>Transition Monitoring</li><li>Calving Alerts</li><li>Post-Calving Recovery</li></ul>
+          <svg class="wave-line" viewBox="0 0 120 28" width="100%"><polyline points="0,20 14,13 24,17 34,7 44,15 54,9 64,19 74,11 88,17 102,7 120,13" stroke="#C8102E" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <div class="sig-card">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="margin-bottom:.9rem;"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="#C8102E" stroke-width="1.7"/></svg>
+          <h4>Repro Signals</h4>
+          <ul class="sig-ul"><li>Heat Detection</li><li>Cycle Tracking</li><li>Reproductive Health</li></ul>
+          <svg class="wave-line" viewBox="0 0 120 28" width="100%"><polyline points="0,18 10,13 20,19 32,8 42,16 55,10 65,20 78,9 90,17 104,11 120,15" stroke="#C8102E" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <div class="sig-card">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="margin-bottom:.9rem;"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h4>Health Signals</h4>
+          <ul class="sig-ul"><li>Illness Detection</li><li>Stress Monitoring</li><li>Behavior Changes</li></ul>
+          <svg class="wave-line" viewBox="0 0 120 28" width="100%"><polyline points="0,15 11,11 22,16 34,6 46,14 58,9 70,18 83,12 96,16 108,8 120,13" stroke="#C8102E" stroke-width="1.5" fill="none"/></svg>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="section">
-      <div class="container">
-        <div class="cta" id="contact">
+<!-- ─── SMART PATCH PLACEMENT ─── -->
+<section class="sec" id="technology">
+  <div class="sec-inner">
+    <p class="ey">Smart Patch</p>
+    <h2 class="h2">Non-Invasive. Accurate. Reliable.</h2>
+    <p class="lead">Our smart patch is designed for maximum comfort and minimal stress. Place it in key locations for accurate signal capture.</p>
+    <div class="patch-layout">
+      <div class="place-list">
+        <div class="pl-item">
+          <div class="pl-thumb" style="background:#1a1a1a;border-color:#333;display:flex;align-items:center;justify-content:center;">
+            <!-- circle crop showing cow ear area -->
+            <img src="product_hero.png" alt="Behind ear sensor" style="width:200%;height:200%;object-fit:cover;object-position:25% 15%;margin-left:-50%;margin-top:-30%;">
+          </div>
           <div>
-            <div class="eyebrow" style="color:#ffd8dc;">Ready to transform herd monitoring?</div>
-            <h2 style="margin-bottom: 10px;">Bring earlier signal detection into your dairy workflow.</h2>
-            <p style="max-width: 650px; color: rgba(255,255,255,0.88);">
-              LactiQ Intelligence combines smart patch sensing, algorithm development, and dashboard decision support to help dairy farms manage calving, repro, and health more proactively.
-            </p>
+            <h4>Behind Ear</h4>
+            <p>Captures temperature and activity signals for early detection.</p>
           </div>
-          <div class="btn-row" style="margin-top:0;">
-            <a class="btn btn-secondary" href="mailto:hello@lactiqintel.com">hello@lactiqintel.com</a>
+        </div>
+        <div class="pl-item">
+          <div class="pl-thumb" style="background:#1a1a1a;border-color:#333;display:flex;align-items:center;justify-content:center;">
+            <img src="product_hero.png" alt="Upper udder sensor" style="width:200%;height:200%;object-fit:cover;object-position:60% 75%;margin-left:-50%;margin-top:-50%;">
+          </div>
+          <div>
+            <h4>Upper Udder</h4>
+            <p>Monitors udder health and reproductive signals.</p>
+          </div>
+        </div>
+        <div class="pl-item">
+          <div class="pl-thumb" style="background:#1a1a1a;border-color:#333;display:flex;align-items:center;justify-content:center;">
+            <img src="product_hero.png" alt="Heart area sensor" style="width:200%;height:200%;object-fit:cover;object-position:40% 45%;margin-left:-50%;margin-top:-40%;">
+          </div>
+          <div>
+            <h4>Heart Area</h4>
+            <p>Tracks physiological signals and overall well-being.</p>
           </div>
         </div>
       </div>
-    </section>
-  </main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <img src="assets/lactiq-logo.png" alt="LactiQ Intelligence logo" style="width: 170px; margin-bottom: 14px;" />
-          <p>LactiQ builds non-invasive smart patch monitoring and algorithm-driven herd decision support for dairy farms.</p>
-        </div>
-        <div>
-          <h4>Product</h4>
-          <a href="#how-it-works">How It Works</a>
-          <a href="#signals">Calving, Repro & Health</a>
-          <a href="#patch">Smart Patch</a>
-          <a href="#dashboard">Dashboard</a>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <a href="#home">About</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <div>
-          <h4>Get in touch</h4>
-          <a href="mailto:hello@lactiqintel.com">hello@lactiqintel.com</a>
-          <a href="#contact">Request a Demo</a>
-        </div>
+      <!-- Full cow photo with red dots overlay -->
+      <div class="cow-photo-wrap" style="background:#111;border-radius:12px;overflow:hidden;position:relative;">
+        <img src="product_hero.png" alt="LactiQ smart patch cow placement" style="width:100%;height:auto;display:block;opacity:.92;">
+        <!-- Red sensor dots positioned on cow -->
+        <div class="photo-dot" style="top:22%;left:28%;"></div>
+        <div class="photo-dot" style="top:44%;left:38%;"></div>
+        <div class="photo-dot" style="top:68%;left:54%;"></div>
       </div>
-      <div class="copyright">© 2026 LactiQ Intelligence. All rights reserved.</div>
     </div>
-  </footer>
+  </div>
+</section>
+
+<!-- ─── DASHBOARD ─── -->
+<section class="sec sec-dark" id="dashboard">
+  <div class="sec-inner">
+    <div class="dash-layout">
+      <!-- Dashboard image — use ChatGPT ref which has dashboard mockup -->
+      <div class="dash-img">
+        <img src="product_ref.png" alt="LactiQ AI dashboard" style="width:100%;height:auto;display:block;">
+      </div>
+      <div>
+        <p class="ey">AI-Powered Dashboard</p>
+        <h2 class="h2">AI Algorithms.<br>Smarter Decisions.</h2>
+        <p class="lead">Our dashboard transforms complex data into simple, actionable insights so you can make confident decisions faster.</p>
+        <div class="dash-bullets">
+          <div class="db">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Real-time alerts &amp; notifications
+          </div>
+          <div class="db">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Individual &amp; herd-level insights
+          </div>
+          <div class="db">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Trend analysis &amp; predictive modeling
+          </div>
+          <div class="db">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#C8102E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Custom reports &amp; data export
+          </div>
+        </div>
+        <a href="#contact" class="btn-red">Request a Demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── OUTCOMES ─── -->
+<section class="sec" id="about">
+  <div class="sec-inner" style="text-align:center;">
+    <p class="ey" style="text-align:center;">Better Outcomes</p>
+    <h2 class="h2">Optimize Performance. Improve Profits.</h2>
+    <div class="oc-grid">
+      <div class="oc-card">
+        <div class="oc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="22 7 13 16 8 11 2 17" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/><polyline points="17 7 22 7 22 12" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h4>Optimize Milk Yield</h4>
+        <p>Healthier cows produce more milk.</p>
+      </div>
+      <div class="oc-card">
+        <div class="oc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><line x1="12" y1="1" x2="12" y2="23" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h4>Reduce Costs</h4>
+        <p>Early detection reduces treatment &amp; vet costs.</p>
+      </div>
+      <div class="oc-card">
+        <div class="oc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="22 17 13 8 8 13 2 7" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/><polyline points="17 17 22 17 22 12" stroke="#C8102E" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h4>Less Culling</h4>
+        <p>Improve cow health &amp; longevity.</p>
+      </div>
+      <div class="oc-card">
+        <div class="oc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#C8102E" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h4>Better Animal Welfare</h4>
+        <p>Healthier cows, happier herd.</p>
+      </div>
+      <div class="oc-card">
+        <div class="oc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" stroke="#C8102E" stroke-width="1.8"/><rect x="10" y="8" width="4" height="13" rx="1" stroke="#C8102E" stroke-width="1.8"/><rect x="17" y="4" width="4" height="17" rx="1" stroke="#C8102E" stroke-width="1.8"/></svg></div>
+        <h4>Data-Driven Decisions</h4>
+        <p>Make smarter decisions with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA BOTTOM ─── -->
+<section class="cta-sec" id="contact">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-h2">Ready to <span>transform</span><br>your herd management?</h2>
+      <p class="cta-sub">Join forward-thinking dairy producers who are already using LactiQ to improve herd health, boost productivity, and increase profitability.</p>
+    </div>
+    <div class="cta-act-list">
+      <div class="cta-act">
+        <div class="cta-act-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#C8102E" stroke-width="1.7"/><line x1="3" y1="10" x2="21" y2="10" stroke="#C8102E" stroke-width="1.7"/><line x1="8" y1="2" x2="8" y2="6" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+        <div><h5>Request a Demo</h5><p>See LactiQ in action.</p></div>
+      </div>
+      <div class="cta-act">
+        <div class="cta-act-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.1 1.18 2 2 0 012.08 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="#C8102E" stroke-width="1.7"/></svg></div>
+        <div><h5>Speak with an Expert</h5><p>Get answers to your questions.</p></div>
+      </div>
+      <div class="cta-act">
+        <div class="cta-act-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><polyline points="22 7 13 16 8 11 2 17" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round"/><polyline points="17 7 22 7 22 12" stroke="#C8102E" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+        <div><h5>Start Improving Today</h5><p>Make smarter herd decisions now.</p></div>
+      </div>
+    </div>
+    <div class="form-col">
+      <label>Get Early Access</label>
+      <input class="form-input" type="text" id="f-name" placeholder="Your name">
+      <input class="form-input" type="email" id="f-email" placeholder="your@email.com">
+      <button class="form-btn" onclick="submitForm()">Request a Demo</button>
+      <div id="form-ok"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <img src="LactiQ_Intel_logo.png" alt="LactiQ Intelligence" class="foot-logo">
+      <p class="foot-tagline">Early detection for healthier, more productive dairy herds.</p>
+      <div class="foot-socials">
+        <a href="#">f</a><a href="#">in</a><a href="#">tw</a><a href="#">yt</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-h">Product</div>
+      <div class="foot-links">
+        <a href="#hiw">How It Works</a>
+        <a href="#health">Health</a>
+        <a href="#repro">Calving &amp; Repro</a>
+        <a href="#technology">Technology</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-h">Company</div>
+      <div class="foot-links">
+        <a href="#about">About Us</a>
+        <a href="#">Careers</a>
+        <a href="#">News</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-h">Resources</div>
+      <div class="foot-links">
+        <a href="#">Blog</a>
+        <a href="#">Case Studies</a>
+        <a href="#">Support</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-h">Stay Connected</div>
+      <p class="foot-tagline" style="margin-bottom:.5rem;">Get the latest updates and insights.</p>
+      <div class="nl-row">
+        <input type="email" placeholder="Enter your email" id="nl-email">
+        <button onclick="document.getElementById('nl-email').value&&(this.textContent='✓ Done!')">Subscribe</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 LactiQ Intelligence. All rights reserved.</span>
+    <span>info@lactiqintel.com &nbsp;·&nbsp; (929) 505-7552 &nbsp;·&nbsp; lactiqintel.com</span>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').style.boxShadow = window.scrollY > 20 ? '0 2px 28px rgba(0,0,0,.55)' : 'none';
+});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+function submitForm(){
+  const name = document.getElementById('f-name').value;
+  const email = document.getElementById('f-email').value;
+  if(email && email.includes('@')){
+    document.getElementById('form-ok').style.display = 'block';
+    document.getElementById('form-ok').textContent = '✓ Thanks' + (name ? ' ' + name : '') + '! We\'ll be in touch at ' + email;
+    document.querySelector('.form-btn').disabled = true;
+    document.querySelector('.form-btn').style.opacity = '.5';
+  }
+}
+</script>
 </body>
 </html>
